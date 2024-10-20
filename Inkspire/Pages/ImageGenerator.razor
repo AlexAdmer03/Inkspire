@@ -1,0 +1,47 @@
+﻿@page "/image-generator"
+@inject IImageGenerationService ImageService
+@using Inkspire.Services
+
+<h3>Image Generator</h3>
+<div class="form-group">
+    <label for="promptInput">Enter your prompt:</label>
+    <input id="promptInput" class="form-control" @bind="prompt" @bind:event="oninput" @onkeyup="GenerateImage" />
+</div>
+@if (!string.IsNullOrEmpty(imageData))
+{
+    <div class="mt-3">
+        <img src="data:image/png;base64,@imageData" alt="Generated Image" style="max-width: 100%;" />
+    </div>
+}
+@code {
+    private string prompt = "";
+    private string imageData = "";
+    private System.Timers.Timer debounceTimer;
+    protected override void OnInitialized()
+    {
+        debounceTimer = new System.Timers.Timer(300);
+        debounceTimer.Elapsed += async (sender, e) => await GenerateImageDebounced();
+        debounceTimer.AutoReset = false;
+    }
+    private void GenerateImage()
+    {
+        debounceTimer.Stop();
+        debounceTimer.Start();
+    }
+    private async Task GenerateImageDebounced()
+    {
+        if (!string.IsNullOrWhiteSpace(prompt))
+        {
+            try
+            {
+                imageData = await ImageService.GenerateImageAsync(prompt);
+                await InvokeAsync(StateHasChanged);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error generating image: {ex.Message}");
+                // Handle error (e.g., display error message to user)
+            }
+        }
+    }
+}

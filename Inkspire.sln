@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inkspire", "Inkspire\Inkspire.csproj", "{ABDE251C-B82C-439B-B0CE-87BAC84C61FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageGenerator.API", "ImageGenerator.API\ImageGenerator.API.csproj", "{254C280D-9168-484D-A4EA-2B68DE942708}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABDE251C-B82C-439B-B0CE-87BAC84C61FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABDE251C-B82C-439B-B0CE-87BAC84C61FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABDE251C-B82C-439B-B0CE-87BAC84C61FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABDE251C-B82C-439B-B0CE-87BAC84C61FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{254C280D-9168-484D-A4EA-2B68DE942708}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{254C280D-9168-484D-A4EA-2B68DE942708}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{254C280D-9168-484D-A4EA-2B68DE942708}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{254C280D-9168-484D-A4EA-2B68DE942708}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84956139-998D-4FE1-926D-08847DCC6972}
+	EndGlobalSection
+EndGlobal
