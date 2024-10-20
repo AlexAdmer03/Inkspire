@@ -24,7 +24,7 @@ namespace ImageGenerator.Api.Controllers
             {
                 Content = JsonContent.Create(new
                 {
-                    model = "black-forest-labs/FLUX.1-schnell",
+                    model = "black-forest-labs/FLUX.1-schnell-Free",
                     prompt = prompt.Text,
                     width = 1024,
                     height = 768,
