@@ -1,44 +1,41 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// VIKTIGT - Lägg till denna rad för att registrera HttpClientFactory
+builder.Services.AddHttpClient();
+
+// Lägg till controllers
 builder.Services.AddControllers();
 
-// Configure CORS
+// CORS configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorApp", policy =>
-        policy.WithOrigins("https://localhost:7227/") // Your Blazor app's URL
+        policy.WithOrigins("https://localhost:7227")
               .AllowAnyMethod()
               .AllowAnyHeader());
 });
 
-// Add HTTP client for Together AI
-builder.Services.AddHttpClient("TogetherAI", client =>
-{
-    client.BaseAddress = new Uri("https://api.together.xyz/");
-    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {builder.Configuration["TogetherAI:ApiKey"]}");
-});
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Swagger configuration
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-
-// Use CORS before Authorization
 app.UseCors("AllowBlazorApp");
-
 app.UseAuthorization();
-
 app.MapControllers();
+
+// Debug-utskrift för att verifiera API-nyckel
+var apiKey = app.Configuration["HuggingFace:ApiKey"] ??
+             app.Configuration["HuggingFace:apiKey"];
+Console.WriteLine($"API Key configured: {!string.IsNullOrEmpty(apiKey)}");
 
 app.Run();

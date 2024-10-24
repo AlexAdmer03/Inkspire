@@ -1,46 +1,85 @@
-﻿@page "/image-generator"
+﻿@page "/"
+@page "/image-generator"
 @inject IImageGenerationService ImageService
 @using Inkspire.Services
 
-<h3>Image Generator</h3>
-<div class="form-group">
-    <label for="promptInput">Enter your prompt:</label>
-    <input id="promptInput" class="form-control" @bind="prompt" @bind:event="oninput" @onkeyup="GenerateImage" />
-</div>
-@if (!string.IsNullOrEmpty(imageData))
-{
-    <div class="mt-3">
-        <img src="data:image/png;base64,@imageData" alt="Generated Image" style="max-width: 100%;" />
+
+
+<div class="page-container">
+    <!-- Video bakgrund -->
+    <video autoplay muted loop class="background-video">
+        <source src="mp4/stars.mp4" type="video/mp4">
+    </video>
+
+    <!-- Content overlay -->
+    <div class="content-overlay">
+
+        <div class="header">
+            <h1 class="title">INKSPIRE</h1>
+            <p class="subtitle">by Alex Admér</p>
+        </div>
+
+
+        <div class="input-container">
+            <input type="text"
+                   class="prompt-input"
+                   placeholder="Enter your image prompt..."
+                   @bind="prompt"
+                   @bind:event="oninput"
+                   @onkeyup="GenerateImage" />
+        </div>
+
+        <div class="image-container">
+            @if (isLoading)
+            {
+                <div class="loader"></div>
+            }
+            else if (!string.IsNullOrEmpty(imageData))
+            {
+                <img src="data:image/png;base64,@imageData" alt="Generated Image" class="generated-image" />
+            }
+        </div>
     </div>
-}
+</div>
+
 @code {
     private string prompt = "";
     private string imageData = "";
+    private bool isLoading = false;
     private System.Timers.Timer debounceTimer;
+
     protected override void OnInitialized()
     {
         debounceTimer = new System.Timers.Timer(300);
         debounceTimer.Elapsed += async (sender, e) => await GenerateImageDebounced();
         debounceTimer.AutoReset = false;
     }
+
     private void GenerateImage()
     {
         debounceTimer.Stop();
         debounceTimer.Start();
     }
+
     private async Task GenerateImageDebounced()
     {
         if (!string.IsNullOrWhiteSpace(prompt))
         {
             try
             {
+                isLoading = true;
+                await InvokeAsync(StateHasChanged);
+
                 imageData = await ImageService.GenerateImageAsync(prompt);
+
+                isLoading = false;
                 await InvokeAsync(StateHasChanged);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error generating image: {ex.Message}");
-                // Handle error (e.g., display error message to user)
+                isLoading = false;
+                await InvokeAsync(StateHasChanged);
             }
         }
     }

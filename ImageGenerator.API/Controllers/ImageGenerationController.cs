@@ -10,39 +10,71 @@ namespace ImageGenerator.Api.Controllers
     public class ImageGenerationController : ControllerBase
     {
         private readonly IHttpClientFactory _clientFactory;
+        private readonly ILogger<ImageGenerationController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public ImageGenerationController(IHttpClientFactory clientFactory)
+        public ImageGenerationController(
+            IHttpClientFactory clientFactory,
+            ILogger<ImageGenerationController> logger,
+            IConfiguration configuration)
         {
             _clientFactory = clientFactory;
+            _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpPost]
         public async Task<IActionResult> GenerateImage([FromBody] ImagePrompt prompt)
         {
-            var client = _clientFactory.CreateClient("TogetherAI");
-            var request = new HttpRequestMessage(HttpMethod.Post, "inference")
+            try
             {
-                Content = JsonContent.Create(new
+                var apiKey = _configuration["HuggingFace:ApiKey"] ??
+                            _configuration["HuggingFace:apiKey"];
+
+                if (string.IsNullOrEmpty(apiKey))
                 {
-                    model = "black-forest-labs/FLUX.1-schnell-Free",
-                    prompt = prompt.Text,
-                    width = 1024,
-                    height = 768,
-                    steps = 3,
-                    response_format = "base64"
-                })
-            };
+                    _logger.LogError("API key not found");
+                    return StatusCode(500, "API configuration error");
+                }
 
-            var response = await client.SendAsync(request);
+                var client = _clientFactory.CreateClient();
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<ImageGenerationResult>(content);
-                return Ok(result);
+                // Skapa request
+                var requestContent = new
+                {
+                    inputs = prompt.Text,
+                    wait_for_model = true
+                };
+
+                var response = await client.PostAsJsonAsync(
+                    "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+                    requestContent
+                );
+
+                // Läs response som bytes först
+                var responseBytes = await response.Content.ReadAsByteArrayAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorText = System.Text.Encoding.UTF8.GetString(responseBytes);
+                    _logger.LogError($"API Error: {errorText}");
+                    return StatusCode((int)response.StatusCode, errorText);
+                }
+
+                // Konvertera bytes till base64
+                var base64String = Convert.ToBase64String(responseBytes);
+
+                return Ok(new ImageGenerationResult
+                {
+                    b64_json = base64String
+                });
             }
-
-            return BadRequest("Failed to generate image");
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
         }
     }
 

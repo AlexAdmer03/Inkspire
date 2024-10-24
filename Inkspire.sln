@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inkspire", "Inkspire\Inkspire.csproj", "{ABDE251C-B82C-439B-B0CE-87BAC84C61FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inkspire", "Inkspire\Inkspire.csproj", "{ABDE251C-B82C-439B-B0CE-87BAC84C61FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageGenerator.API", "ImageGenerator.API\ImageGenerator.API.csproj", "{254C280D-9168-484D-A4EA-2B68DE942708}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageGenerator.API", "ImageGenerator.API\ImageGenerator.API.csproj", "{254C280D-9168-484D-A4EA-2B68DE942708}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
